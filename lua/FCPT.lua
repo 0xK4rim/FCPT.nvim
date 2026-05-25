@@ -3,15 +3,16 @@ local M = {}
 M.config = {
   compiler = "g++",
   flags = {
-    "-std=c++20",
+    "-std=c++23",
     "-O2",
     "-Wall",
     "-Wextra",
+    "-march=native",
     "-pipe",
   },
   timeout_ms = 5000,
   sanitizer = true,
-  test_file = "", -- Replace with your firefox's default download path
+  test_file = "",
 }
 
 local function launch_terminal(script)
@@ -175,7 +176,11 @@ end
 -- Running
 local function run_binary(binary, input)
   local result = vim.system(
-    { binary },
+    {
+      "sh",
+      "-c",
+      string.format("ulimit -s %d && %q", 262144, binary),
+    },
     {
       text = true,
       stdin = input,
