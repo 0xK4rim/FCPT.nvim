@@ -51,7 +51,8 @@ end
 local function normalize(s)
   s = s or ""
   s = s:gsub("\r\n", "\n")
-  s = s:gsub("%s+$", "")
+  s = s:gsub("[ \t]+\n", "\n")
+  s = s:gsub("[ \t]+$", "")
   return s
 end
 
