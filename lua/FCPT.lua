@@ -49,11 +49,15 @@ local function show_in_terminal(report_text)
 end
 
 local function normalize(s)
-  s = s or ""
-  s = s:gsub("\r\n", "\n")
-  s = s:gsub("[ \t]+\n", "\n")
-  s = s:gsub("[ \t]+$", "")
-  return s
+  s = (s or ""):gsub("\r\n", "\n"):gsub("\r", "\n")
+  local out = {}
+  for line in (s .. "\n"):gmatch("(.-)\n") do
+    out[#out + 1] = line:gsub("[ \t]+$", "")
+  end
+  while #out > 0 and out[#out] == "" do
+    out[#out] = nil
+  end
+  return table.concat(out, "\n")
 end
 
 local function file_exists(path)
