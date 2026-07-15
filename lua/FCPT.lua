@@ -210,6 +210,11 @@ end
 
 -- Main
 function M.run(test_file)
+  local ok_write, write_err = pcall(vim.cmd, "silent! write")
+  if not ok_write then
+    vim.notify("Failed to write file before compiling: " .. tostring(write_err), vim.log.levels.ERROR)
+    return
+  end
   test_file = M.config.test_file
   if not file_exists(test_file) then
     vim.notify("Test file not found: " .. test_file, vim.log.levels.ERROR)
