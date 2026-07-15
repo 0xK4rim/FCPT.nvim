@@ -178,6 +178,22 @@ local function compile(source, output)
   return true, ""
 end
 
+-- Saving
+local function save_current_buffer()
+  if vim.bo.modified then
+    if vim.api.nvim_buf_get_name(0) == "" then
+      return false, "Current buffer has no file name yet. Save it once first."
+    end
+
+    local ok, err = pcall(vim.cmd, "silent update")
+    if not ok then
+      return false, err
+    end
+  end
+
+  return true
+end
+
 -- Running
 local function run_binary(binary, input)
   local result = vim.system(
@@ -210,12 +226,12 @@ end
 
 -- Main
 function M.run(test_file)
+  test_file = M.config.test_file
   local ok_write, write_err = pcall(vim.cmd, "silent! write")
   if not ok_write then
     vim.notify("Failed to write file before compiling: " .. tostring(write_err), vim.log.levels.ERROR)
     return
   end
-  test_file = M.config.test_file
   if not file_exists(test_file) then
     vim.notify("Test file not found: " .. test_file, vim.log.levels.ERROR)
     return
